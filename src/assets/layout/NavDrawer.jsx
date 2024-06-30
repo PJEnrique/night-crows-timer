@@ -1,15 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { SwipeableDrawer, List, ListItemButton, ListItemText, IconButton, Typography, Divider } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import { firestore } from '../firebase'; // Assuming you have initialized firestore in firebase.js
+import { styled } from '@mui/material/styles'; // Import styled function
 
+const StyledAppBar = styled(AppBar)(({ theme, isScrolled }) => ({
+  backgroundColor: isScrolled ? '#282a36' : '#393c4d',
+  transition: 'background-color 0.3s ease',
+  [theme.breakpoints.down('sm')]: {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+  },
+}));
 
-const NavDrawer = ({ onClose }) => {
-  const [open, setOpen] = useState(false);
+const StyledTypography = styled(Typography)({
+  flexGrow: 1,
+  textDecoration: 'none',
+  color: 'inherit',
+});
+
+const StyledButton = styled(Button)({
+  color: 'inherit',
+  textDecoration: 'none',
+  '&:hover': {
+    backgroundColor: '#5f6273',
+  },
+});
+
+const NavBar = ({ onClose }) => {
   const [expirationDate, setExpirationDate] = useState('');
+  const [isScrolled, setIsScrolled] = useState(false);
   const { signOut, currentUser } = useAuth(); // Access the signOut function and currentUser from AuthContext
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      if (scrollPosition > 0) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchExpirationDate = async () => {
@@ -29,28 +68,6 @@ const NavDrawer = ({ onClose }) => {
     fetchExpirationDate();
   }, [currentUser]);
 
-  const toggleDrawer = (open) => (event) => {
-    if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
-      return;
-    }
-
-    setOpen(open);
-    if (onClose && !open) {
-      onClose();
-    }
-  };
-
-  const handleOpenDrawer = () => {
-    setOpen(true);
-  };
-
-  const handleCloseDrawer = () => {
-    setOpen(false);
-    if (onClose) {
-      onClose();
-    }
-  };
-
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -61,43 +78,33 @@ const NavDrawer = ({ onClose }) => {
   };
 
   return (
-    <>
-      <IconButton onClick={handleOpenDrawer} color="inherit" aria-label="open drawer">
-        <MenuIcon />
-      </IconButton>
-      <SwipeableDrawer
-        anchor="left"
-        open={open}
-        onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
-      >
-        <div style={{ width: 250, padding: '20px' }}>
-          <List>
-            <ListItemButton component={Link} to="/user/rookServer" onClick={handleCloseDrawer}>
-              <ListItemText primary="RookServer" />
-            </ListItemButton>
-            <ListItemButton component={Link} to="/user/bishopServer" onClick={handleCloseDrawer}>
-              <ListItemText primary="BishopServer" />
-            </ListItemButton>
-            <ListItemButton component={Link} to="/user/knightServer" onClick={handleCloseDrawer}>
-              <ListItemText primary="KnightServer" />
-            </ListItemButton>
-          </List>
-          <Divider />
-          <List>
-            <ListItemButton onClick={handleSignOut}>
-              <ListItemText primary="Sign Out" />
-            </ListItemButton>
-          </List>
+    <StyledAppBar position="fixed" isScrolled={isScrolled}>
+      <Toolbar>
+        <StyledTypography variant="h6" component={Link} to="/" style={{ flexGrow: 1 }}>
+          NIGHTCROWS TINDAHAN
+        </StyledTypography>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <StyledButton component={Link} to="/user/rookServer" style={{ marginRight: '10px' }}>
+            RookServer
+          </StyledButton>
+          <StyledButton component={Link} to="/user/bishopServer" style={{ marginRight: '10px' }}>
+            BishopServer
+          </StyledButton>
+          <StyledButton component={Link} to="/user/knightServer" style={{ marginRight: '10px' }}>
+            KnightServer
+          </StyledButton>
+          <StyledButton onClick={handleSignOut}>
+            Sign Out
+          </StyledButton>
           {expirationDate && (
-            <Typography variant="body2" color="textSecondary" style={{ marginTop: '10px' }}>
+            <Typography variant="body2" style={{ color: 'inherit', marginLeft: '10px' }}>
               Expires on: {expirationDate}
             </Typography>
           )}
         </div>
-      </SwipeableDrawer>
-    </>
+      </Toolbar>
+    </StyledAppBar>
   );
 };
 
-export default NavDrawer;
+export default NavBar;

@@ -7,7 +7,7 @@ import NavDrawer from "./assets/layout/NavDrawer.jsx"; // Adjusted path
 import Login from "./assets/pages/login.jsx"; // Adjusted path
 import Register from "./assets/pages/register.jsx"; // Adjusted path
 import { useAuth } from "./assets/context/AuthContext.jsx"; // Adjusted path
-
+import Footer from "../src/assets/layout/footer.jsx"; // Adjusted path to Footer component
 
 const App = () => {
   const { currentUser } = useAuth(); // Access the currentUser from AuthContext
@@ -27,6 +27,8 @@ const App = () => {
         <Route path="/user/bishopServer" element={currentUser ? <BishopServer /> : <Navigate to="/" />} />
         <Route path="/user/knightServer" element={currentUser ? <KnightServer /> : <Navigate to="/" />} />
       </Routes>
+      
+      <Footer /> {/* Include Footer component here */}
     </Router>
   );
 };
