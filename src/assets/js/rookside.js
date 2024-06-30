@@ -47,7 +47,8 @@ export const Inferno430 = [
   "Newbreeze Border",
   "Rocky Mountain Cliff",
   "High Ground Summit",
-  "Cloud Path Watchtower"
+  "Cloud Path Watchtower",
+  "Source of Heavy Combat",
 ];
 
 const spawnrookData = {

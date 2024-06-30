@@ -48,6 +48,7 @@ export const Inferno430 = [
   "Cloud Path Watchtower",
   "Horizon Peaks",
   "Stonegrave Summit",
+  "Source of Heavy Combat",
 ];
 
 const spawnknightData = {
