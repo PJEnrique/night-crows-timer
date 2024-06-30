@@ -1,8 +1,20 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDiscord } from '@fortawesome/free-brands-svg-icons';
 
 const Footer = () => {
+  const location = useLocation();
+  const hideFooterOnPaths = ['/', '/register']; // Paths where footer should be hidden
+
+  // Check if current path is in hideFooterOnPaths
+  const shouldHideFooter = hideFooterOnPaths.includes(location.pathname);
+
+  // Render null if shouldHideFooter is true
+  if (shouldHideFooter) {
+    return null;
+  }
+
   return (
     <footer style={{ backgroundColor: '#282a36', color: '#fff', textAlign: 'center', position: 'fixed', bottom: 0, width: '100%' }}>
       <div style={{ padding: '10px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

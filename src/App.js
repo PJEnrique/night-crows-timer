@@ -28,7 +28,7 @@ const App = () => {
         <Route path="/user/knightServer" element={currentUser ? <KnightServer /> : <Navigate to="/" />} />
       </Routes>
       
-      <Footer /> {/* Include Footer component here */}
+      <Footer /> 
     </Router>
   );
 };
