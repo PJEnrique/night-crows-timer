@@ -58,17 +58,17 @@ const spawnknightData = {
     maps: Anggolt
   },
   Kiaron: {
-    intervalHours: 4,
+    intervalHours: 5,
     intervalMinutes: 0,
     maps: Kiaron
   },
   Grish: {
-    intervalHours: 4,
+    intervalHours: 6,
     intervalMinutes: 0,
     maps: Grish
   },
   Inferno: {
-    intervalHours: 4,
+    intervalHours: 7,
     intervalMinutes: 0,
     maps: Inferno
   },

@@ -19,7 +19,6 @@ function BishopServer() {
   });
 
   useEffect(() => {
-    // Load webhook URLs from localStorage when the component mounts
     setWebhookURLs({
       Anggolt: localStorage.getItem('webhookURL_Anggolt') || '',
       Kiaron: localStorage.getItem('webhookURL_Kiaron') || '',
@@ -43,7 +42,6 @@ function BishopServer() {
   const handleWebhookURLChange = (boss, url) => {
     setWebhookURLs(prevURLs => {
       const updatedURLs = { ...prevURLs, [boss]: url };
-      // Save the updated URL in localStorage
       localStorage.setItem(`webhookURL_${boss}`, url);
       return updatedURLs;
     });
@@ -55,10 +53,7 @@ function BishopServer() {
     nextSpawn.setHours(deadDate.getHours() + interval.hours);
     nextSpawn.setMinutes(deadDate.getMinutes() + interval.minutes);
 
-    // Convert to Philippine Time
     const nextSpawnInPHT = new Date(nextSpawn.toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
-
-    // Format date to string
     const options = { 
       weekday: 'short', 
       year: 'numeric', 
@@ -81,13 +76,13 @@ function BishopServer() {
       interval = { hours: 4, minutes: 0 };
       webhookURL = webhookURLs.Anggolt;
     } else if (Kiaron.includes(selectedBoss)) {
-      interval = { hours: 4, minutes: 0 };
+      interval = { hours: 5, minutes: 0 };
       webhookURL = webhookURLs.Kiaron;
     } else if (Grish.includes(selectedBoss)) {
-      interval = { hours: 4, minutes: 0 };
+      interval = { hours: 6, minutes: 0 };
       webhookURL = webhookURLs.Grish;
     } else if (Inferno.includes(selectedBoss)) {
-      interval = { hours: 4, minutes: 0 };
+      interval = { hours: 7, minutes: 0 };
       webhookURL = webhookURLs.Inferno;
     } else if (Anggolt430.includes(selectedBoss)) {
       interval = { hours: 4, minutes: 30 };
@@ -102,21 +97,17 @@ function BishopServer() {
       interval = { hours: 7, minutes: 30 };
       webhookURL = webhookURLs.Inferno430;
     } else {
-      // Handle case where no boss is selected or webhook URL is not specified
       console.error('Invalid boss selection or webhook URL not specified.');
       return;
     }
 
     const nextSpawnTime = calculateNextSpawn(spawnTime, interval);
     notifyDiscord(webhookURL, nextSpawnTime);
-  
-    // Reset selection and time after notifying
     setSelectedBoss('');
     setSpawnTime('');
   };
 
   const notifyDiscord = (webhookURL, nextSpawnTime) => {
-    // Post notification to Discord
     axios.post(webhookURL, {
       content: `The next spawn time for ${selectedBoss} is at ${nextSpawnTime} Philippine Time`
     }).then(response => {
@@ -128,7 +119,7 @@ function BishopServer() {
 
   return (
     <div className="container">
-      <h1>Boss Timer Bishop</h1>
+      <h1>Battlefront Bishop Server Boss Timer</h1>
       <TableContainer component={Paper} className="table-container">
         <Table className="table">
           <TableHead>
@@ -141,214 +132,43 @@ function BishopServer() {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>bishop Anggolt</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Anggolt</em></MenuItem>
-                  {Anggolt.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Anggolt}
-                  onChange={(e) => handleWebhookURLChange('Anggolt', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>bishop Kiaron</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Kiaron</em></MenuItem>
-                  {Kiaron.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Kiaron}
-                  onChange={(e) => handleWebhookURLChange('Kiaron', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>bishop Grish</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Grish</em></MenuItem>
-                  {Grish.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Grish}
-                  onChange={(e) => handleWebhookURLChange('Grish', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>bishop Inferno</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Inferno</em></MenuItem>
-                  {Inferno.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Inferno}
-                  onChange={(e) => handleWebhookURLChange('Inferno', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>enemy side Anggolt</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Anggolt 4:30</em></MenuItem>
-                  {Anggolt430.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Anggolt430}
-                  onChange={(e) => handleWebhookURLChange('Anggolt430', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>enemy side Kiaron</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Kiaron 4:30</em></MenuItem>
-                  {Kiaron430.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Kiaron430}
-                  onChange={(e) => handleWebhookURLChange('Kiaron430', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>enemy side Grish</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Grish 4:30</em></MenuItem>
-                  {Grish430.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Grish430}
-                  onChange={(e) => handleWebhookURLChange('Grish430', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>enemy side Inferno</TableCell>
-              <TableCell>
-                <Select value={selectedBoss} onChange={handleSelectChange} className="select">
-                  <MenuItem disabled value=""><em>Select Inferno 4:30</em></MenuItem>
-                  {Inferno430.map(boss => (
-                    <MenuItem key={boss} value={boss}>{boss}</MenuItem>
-                  ))}
-                </Select>
-              </TableCell>
-              <TableCell>
-                <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  value={webhookURLs.Inferno430}
-                  onChange={(e) => handleWebhookURLChange('Inferno430', e.target.value)}
-                  className="text-field"
-                />
-              </TableCell>
-              <TableCell className="button">
-                <Button variant="contained" color="primary" onClick={handleSubmit}>
-                  Calculate and Notify
-                </Button>
-              </TableCell>
-            </TableRow>
+            {[
+              { label: 'Bishop Anggolt', bosses: Anggolt, webhook: 'Anggolt' },
+              { label: 'Bishop Kiaron', bosses: Kiaron, webhook: 'Kiaron' },
+              { label: 'Bishop Grish', bosses: Grish, webhook: 'Grish' },
+              { label: 'Bishop Inferno', bosses: Inferno, webhook: 'Inferno' },
+              { label: 'Enemy Side Anggolt', bosses: Anggolt430, webhook: 'Anggolt430' },
+              { label: 'Enemy Side Kiaron', bosses: Kiaron430, webhook: 'Kiaron430' },
+              { label: 'Enemy Side Grish', bosses: Grish430, webhook: 'Grish430' },
+              { label: 'Enemy Side Inferno', bosses: Inferno430, webhook: 'Inferno430' }
+            ].map((group, index) => (
+              <TableRow key={index}>
+                <TableCell>{group.label}</TableCell>
+                <TableCell>
+                  <Select value={selectedBoss} onChange={handleSelectChange} className="select">
+                    <MenuItem disabled value=""><em>Select {group.label.split(' ')[1]}</em></MenuItem>
+                    {group.bosses.map(boss => (
+                      <MenuItem key={boss} value={boss}>{boss}</MenuItem>
+                    ))}
+                  </Select>
+                </TableCell>
+                <TableCell>
+                  <TextField type="datetime-local" value={spawnTime} onChange={handleTimeChange} className="text-field" />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    value={webhookURLs[group.webhook]}
+                    onChange={(e) => handleWebhookURLChange(group.webhook, e.target.value)}
+                    className="text-field"
+                  />
+                </TableCell>
+                <TableCell className="button">
+                  <Button variant="contained" color="primary" onClick={handleSubmit}>
+                    Calculate and Notify
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
